@@ -1,30 +1,53 @@
-package Aaahooly.SpringBootLesson331.models;
+package ru.kata.spring.boot_security.demo.models;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Objects;
-
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private int id;
 
-    @Column
-    private String name;
+    @Column(name = "password")
+    private String password;
 
-    @Column
+    @Column(name = "username")
+    private String username;
+
+    @Column(name = "age")
     private int age;
 
-    public User(String name, int age) {
-        this.name = name;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles = new HashSet<>();
+
+
+    public User(String password, String username, int age, Set<Role> roles) {
+        this.username = username;
+        this.age = age;
+        this.roles = roles;
+    }
+
+    public User(String username, int age, Set<Role> roles) {
+        this.username = username;
         this.age = age;
     }
 
-    public User() {}
+    public User() {
+    }
+
+    //Запихиваем пачку ролей в Collection
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
+    }
 
     public int getId() {
         return id;
@@ -34,12 +57,12 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getAge() {
@@ -50,25 +73,53 @@ public class User {
         this.age = age;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id && age == user.age && Objects.equals(name, user.name);
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, name, age);
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     @Override
     public String toString() {
-        return "\nUser{" +
+        return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
                 ", age=" + age +
+                ", roles=" + roles +
                 '}';
     }
 }
+

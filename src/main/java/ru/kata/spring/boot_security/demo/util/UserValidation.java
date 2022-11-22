@@ -1,11 +1,12 @@
-package Aaahooly.SpringSecurityApp.util;
+package ru.kata.spring.boot_security.demo.util;
 
-import Aaahooly.SpringSecurityApp.models.User;
+
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import ru.kata.spring.boot_security.demo.models.User;
 
 @Component
 public class UserValidation implements Validator {
@@ -15,7 +16,6 @@ public class UserValidation implements Validator {
     public UserValidation(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
-
 
     //Пишем класс который будет валидироваться
     @Override
@@ -35,5 +35,4 @@ public class UserValidation implements Validator {
         }
         errors.rejectValue("username", "", "Человек с таким именем уже существует!");
     }
-
 }

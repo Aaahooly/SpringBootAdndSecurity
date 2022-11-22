@@ -1,15 +1,17 @@
-package Aaahooly.SpringBootLesson331.controllers;
+package ru.kata.spring.boot_security.demo.controllers;
 
 
-import Aaahooly.SpringBootLesson331.models.User;
-import Aaahooly.SpringBootLesson331.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.services.UserService;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping()
 public class UserController {
 
     private final UserService userService;
@@ -19,47 +21,13 @@ public class UserController {
         this.userService = userService;
     }
 
-
-    @GetMapping()
-    public String index(Model model) {
-            model.addAttribute("users", userService.index());
-        return "users/index";
+    @GetMapping("/user")
+    public String Hello(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+        User user = userService.findByUsername(name).get();
+        model.addAttribute("user", user);
+        System.out.println(name);
+        return "/user";
     }
-
-    @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model) { // С помощью анотации @PathVariable Мы получим id c в метод
-        model.addAttribute("user" , userService.show(id));
-        return "users/show";
-    }
-
-    @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user) {
-        return "users/new";
-    }
-
-    @PostMapping()
-    public String create(@ModelAttribute("user") User user) {
-        userService.saveUser(user);
-        return "redirect:/users";
-    }
-
-    @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
-        model.addAttribute("user", userService.show(id));
-        return "users/edit";
-    }
-
-    @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") User user, @PathVariable("id") int id) {
-        userService.updateUser(id, user);
-        return "redirect:/users";
-    }
-
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id") int id, Model model) {
-        userService.deleteUser(id);
-        return "redirect:/users";
-    }
-
-
 }

@@ -1,8 +1,8 @@
-package Aaahooly.SpringBootLesson331.dao;
+package ru.kata.spring.boot_security.demo.dao;
 
 
 
-import Aaahooly.SpringBootLesson331.models.User;
+import ru.kata.spring.boot_security.demo.models.User;
 
 import java.util.List;
 

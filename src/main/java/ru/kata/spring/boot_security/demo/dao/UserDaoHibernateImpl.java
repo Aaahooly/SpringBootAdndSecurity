@@ -1,9 +1,9 @@
-package Aaahooly.SpringBootLesson331.dao;
+package ru.kata.spring.boot_security.demo.dao;
 
-
-import Aaahooly.SpringBootLesson331.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.kata.spring.boot_security.demo.models.User;
+
 import javax.persistence.EntityManager;
 import java.util.List;
 
@@ -41,8 +41,14 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void updateUser(int idUser, User user) {
         User user1 = entityManager.find(User.class, idUser);
-        user1.setName(user.getName());
+        user1.setUsername(user.getUsername());
         user1.setAge(user.getAge());
+        user1.setPassword(user.getPassword());
+        user1.setRoles(user.getRoles());
         entityManager.persist(user1);
+    }
+
+    public EntityManager getEntityManager() {
+        return this.entityManager;
     }
 }
