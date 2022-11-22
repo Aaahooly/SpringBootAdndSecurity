@@ -20,6 +20,7 @@ public class Role implements GrantedAuthority {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new TreeSet<>();
 
+
     public Role(int id) {
         this.id = id;
     }
@@ -32,6 +33,17 @@ public class Role implements GrantedAuthority {
     public Role() {
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
     public int getId() {
         return id;
     }

@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
@@ -28,7 +29,7 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping("")
+    @GetMapping()
     public String index(Model model) {
         System.out.println(userService.index());
         model.addAttribute("users", userService.index());
@@ -42,29 +43,33 @@ public class AdminController {
     }
 
     @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user, Model model) {
+    public String newUser(@ModelAttribute("user") User user, Model model,
+                          @ModelAttribute("roleTh") Role role) {
+        model.addAttribute("roleList", roleService.findAll());
         return "admin/new";
     }
 
-    @PostMapping()
-    public String create(@ModelAttribute("user") User user, @RequestParam("userRole") String userRole) {
+    @PostMapping("/create")
+    public String create(@ModelAttribute("user") User user,
+                         @ModelAttribute("roleTh") Role role) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.saveUser(roleService.setUserRole(user, userRole));
+        userService.saveUser(roleService.setUserRole(user, role.getName()));
         return "redirect:admin";
     }
 
     @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") int id) {
+    public String edit(Model model, @PathVariable("id") int id,@ModelAttribute("roleTh") Role role) {
+        model.addAttribute("roleList", roleService.findAll());
         model.addAttribute("user", userService.show(id));
         return "admin/edit";
     }
 
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("user") User user, @PathVariable("id") int id,
-                         @RequestParam("userRole") String userRole) {
-        System.out.println(userRole);
+                         @ModelAttribute("roleTh") Role role) {
+        System.out.println(role.getName());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.updateUser(id, roleService.setUserRole(user, userRole));
+        userService.updateUser(id, roleService.setUserRole(user, role.getName()));
         return "redirect:/admin";
     }
 

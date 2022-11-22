@@ -20,10 +20,10 @@
     <input type="password" th:field="*{password}" id="password"/>
     <br/>
 
-    <label>Измените роль: </label>
-    <select id="userRole" name="userRole">
-        <option value="ROLE_ADMIN">Администратор</option>
-        <option value="ROLE_USER">Юзер</option>
+    <label for="role">Измените роль: </label>
+    <select th:object="${roleTh}" th:field="*{name}" id="role">
+        <option th:each="role : ${roleList}" th:value="${role.name}"
+                th:text="${role.name}">Role</option>
     </select>
     <br/>
     <input type="submit" value="Update!"/>
