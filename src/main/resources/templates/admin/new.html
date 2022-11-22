@@ -20,9 +20,11 @@
   <input type="text" th:field="*{age}" id="age"/>
   <br/>
 
-  <label>Назначьте роль: </label>
-  <input type="text" name="userRole"/>
-  <br/>
+  <label>Измените роль: </label>
+  <select id="userRole" name="userRole">
+    <option value="ROLE_ADMIN">Администратор</option>
+    <option value="ROLE_USER">Юзер</option>
+  </select>
   <input type="submit" value="Создать пользователя"/>
   <br/>
 </form>

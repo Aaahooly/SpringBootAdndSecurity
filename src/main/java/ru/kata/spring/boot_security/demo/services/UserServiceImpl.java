@@ -3,7 +3,6 @@ package ru.kata.spring.boot_security.demo.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import java.sql.SQLException;
@@ -13,13 +12,10 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    private final UserDao userDao;
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, UserRepository userRepository) {
-        this.userDao = userDao;
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -32,29 +28,33 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = SQLException.class, readOnly = true)
     @Override
     public List<User> index() {
-        return userDao.index();
+        return userRepository.findAll();
     }
 
 
     @Override
     public User show(int idUser) {
-        return userDao.show(idUser);
+        return userRepository.findById(idUser).get();
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void saveUser(User user) {
-        userDao.saveUser(user);
+        userRepository.save(user);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteUser(int idUser) {
-        userDao.deleteUser(idUser);
+        userRepository.deleteById(idUser);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateUser(int idUser, User user) {
-        userDao.updateUser(idUser, user);
+        User userDb = userRepository.findById(idUser).get();
+        userDb.setUsername(user.getUsername());
+        userDb.setAge(user.getAge());
+        userDb.setPassword(user.getPassword());
+        userDb.setRoles(user.getRoles());
     }
 }
