@@ -12,6 +12,8 @@ import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 import ru.kata.spring.boot_security.demo.services.UserServiceImpl;
 
+import java.util.Arrays;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -43,18 +45,18 @@ public class AdminController {
     }
 
     @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user, Model model,
-                          @ModelAttribute("roleTh") Role role) {
+    public String newUser(@ModelAttribute("user") User user, Model model) {
         model.addAttribute("roleList", roleService.findAll());
         return "admin/new";
     }
 
     @PostMapping("/create")
     public String create(@ModelAttribute("user") User user,
-                         @ModelAttribute("roleTh") Role role) {
+                         @RequestParam("str") String[] rolesOfForm) {
+        System.out.println(Arrays.toString(rolesOfForm));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.saveUser(roleService.setUserRole(user, role.getName()));
-        return "redirect:admin";
+        userService.saveUser(roleService.setUserRole(user, rolesOfForm));
+        return "redirect:/admin";
     }
 
     @GetMapping("/{id}/edit")
@@ -66,10 +68,9 @@ public class AdminController {
 
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("user") User user, @PathVariable("id") int id,
-                         @ModelAttribute("roleTh") Role role) {
-        System.out.println(role.getName());
+                         @RequestParam("str") String[] rolesOfForm) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.updateUser(id, roleService.setUserRole(user, role.getName()));
+        userService.updateUser(id, roleService.setUserRole(user, rolesOfForm));
         return "redirect:/admin";
     }
 

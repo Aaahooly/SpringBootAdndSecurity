@@ -21,10 +21,16 @@
   <br/>
 
   <label for="role">Измените роль: </label>
-  <select th:object="${roleTh}" th:field="*{name}" id="role">
+  <select type="text" name="str" id="role"  multiple size="2">
     <option th:each="role : ${roleList}" th:value="${role.name}"
-    th:text="${role.name}">Role</option>
+            th:text="${role.name}">Role</option>
   </select>
+
+<!--  <label for="role">Измените роль: </label>-->
+<!--  <select th:object="${roleTh}" th:field="*{str}" id="role"  multiple>-->
+<!--    <option th:each="role : ${roleList}" th:value="${role.name}"-->
+<!--    th:text="${role.name}">Role</option>-->
+<!--  </select>-->
   <input type="submit" value="Создать пользователя"/>
   <br/>
 </form>

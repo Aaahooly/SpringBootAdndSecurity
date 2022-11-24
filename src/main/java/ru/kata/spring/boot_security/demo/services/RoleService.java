@@ -21,9 +21,16 @@ public class RoleService {
         return roleRepository.findAll();
     }
 
-    public User setUserRole(User user, String userRole) {
-        findAll().stream().filter(x -> x.getUserRole().equals(userRole)).
-                forEach(x -> user.getRoles().add(x));
+
+    public User setUserRole(User user, String[] roleName) {
+        System.out.println(user + "\n" + roleName);
+        for (Role role : findAll()) {
+            for (int i = 0; i < roleName.length; i++) {
+                if (role.getName().equals(roleName[i])) {
+                    user.getRoles().add(role);
+                }
+            }
+        }
         return user;
     }
 }

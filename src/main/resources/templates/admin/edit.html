@@ -21,7 +21,7 @@
     <br/>
 
     <label for="role">Измените роль: </label>
-    <select th:object="${roleTh}" th:field="*{name}" id="role">
+    <select type="text" name="str" id="role"  multiple size="2">
         <option th:each="role : ${roleList}" th:value="${role.name}"
                 th:text="${role.name}">Role</option>
     </select>
