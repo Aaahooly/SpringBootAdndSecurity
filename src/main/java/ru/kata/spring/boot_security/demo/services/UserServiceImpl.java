@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.User;
@@ -56,5 +58,13 @@ public class UserServiceImpl implements UserService {
         userDb.setAge(user.getAge());
         userDb.setPassword(user.getPassword());
         userDb.setRoles(user.getRoles());
+    }
+
+    @Override
+    public User getUserOfAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+        User user = findByUsername(name).get();
+        return user;
     }
 }

@@ -18,4 +18,6 @@ public interface UserService {
     public void updateUser(int idUser,User user);
 
     public Optional<User> findByUsername(String username);
+
+    public User getUserOfAuthentication();
 }

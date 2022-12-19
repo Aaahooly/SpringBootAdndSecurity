@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.models;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -18,7 +19,7 @@ public class Role implements GrantedAuthority {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new TreeSet<>();
+    private Set<User> users = new LinkedHashSet<>();
 
     public Role(int id) {
         this.id = id;
@@ -65,9 +66,6 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return "Role{" +
-                "id=" + id +
-                ", userRole='" + name + '\'' +
-                '}';
+        return name;
     }
 }

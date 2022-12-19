@@ -12,7 +12,6 @@ import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 import ru.kata.spring.boot_security.demo.services.UserServiceImpl;
 
-import java.util.Arrays;
 
 @Controller
 @RequestMapping("/admin")
@@ -20,22 +19,23 @@ public class AdminController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final UserDetailsService userDetailsService;
     private final RoleService roleService;
 
+
     @Autowired
-    public AdminController(UserServiceImpl userService, PasswordEncoder passwordEncoder, UserDetailsService userDetailsService, RoleService roleService) {
+    public AdminController(UserServiceImpl userService, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.userDetailsService = userDetailsService;
         this.roleService = roleService;
     }
 
     @GetMapping()
     public String index(Model model) {
         System.out.println(userService.index());
+        model.addAttribute("user", userService.getUserOfAuthentication());
         model.addAttribute("users", userService.index());
-        return "admin/admin_page";
+        model.addAttribute("roleList", roleService.findAll());
+        return "admin/admin_page_bt";
     }
 
     @GetMapping("/{id}")
@@ -53,7 +53,6 @@ public class AdminController {
     @PostMapping("/create")
     public String create(@ModelAttribute("user") User user,
                          @RequestParam("str") String[] rolesOfForm) {
-        System.out.println(Arrays.toString(rolesOfForm));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.saveUser(roleService.setUserRole(user, rolesOfForm));
         return "redirect:/admin";
@@ -66,11 +65,11 @@ public class AdminController {
         return "admin/edit";
     }
 
-    @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") User user, @PathVariable("id") int id,
+    @PatchMapping()
+    public String update(@ModelAttribute("user") User user,
                          @RequestParam("str") String[] rolesOfForm) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.updateUser(id, roleService.setUserRole(user, rolesOfForm));
+        userService.updateUser(user.getId(), roleService.setUserRole(user, rolesOfForm));
         return "redirect:/admin";
     }
 

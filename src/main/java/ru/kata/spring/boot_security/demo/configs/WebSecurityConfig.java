@@ -29,14 +29,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/admin/**", "/users/**").hasAnyRole("ADMIN")//Говорим что на страницу админа, может попасть прользователь с ролью админ
                 .antMatchers("/users/**").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/auth/login", "/error", "/auth/registration").permitAll()//Сначала пускаем только на страницу логирования и ошибки
+                .antMatchers("/auth", "/error", "/auth/registration").permitAll()//Сначала пускаем только на страницу логирования и ошибки
                 .and()
                 .formLogin().loginPage("/auth/login")//Своя форма логирования
                 .loginProcessingUrl("/process_login")//вводится название адресса которому передаются данные с формы
                 .successHandler(successUserHandler)// Гибкая настройка редиректа при определённых данных юзера
-                .failureUrl("/auth/login?error")//Если аутентификация не успешна выкидываем ошибку и перенаправляем обратно на страницу логирования
+                .failureUrl("/auth?error")//Если аутентификация не успешна выкидываем ошибку и перенаправляем обратно на страницу логирования
                 .and().logout().logoutUrl("/logout")//logout- выход из сессии и куки
-                .logoutSuccessUrl("/auth/login");
+                .logoutSuccessUrl("/auth");
     }
 
     @Override

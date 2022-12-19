@@ -4,9 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -26,7 +24,7 @@ public class User implements UserDetails {
     private int age;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> roles = new TreeSet<>();
+    private Set<Role> roles = new LinkedHashSet<>();
 
 
     public User(String password, String username, int age, Set<Role> roles) {
@@ -111,6 +109,11 @@ public class User implements UserDetails {
         return true;
     }
 
+    public String formatNameRoles(){
+        return Arrays.toString(new Set[]{roles}) // collection - ваша коллекция
+                .replace("[", "").replace("ROLE_", "")  // удалим скобку (можно заменить на "(")
+                .replace("]", "");
+    }
     @Override
     public String toString() {
         return "User{" +
