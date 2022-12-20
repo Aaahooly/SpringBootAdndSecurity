@@ -13,7 +13,7 @@
 <div class="container-fluid">
   <div class="row bg-dark " style="height: 35px">
     <div class="col-10 float-left text-light h4" th:text="'Login: ' + ${user.getUsername()} + ' with roles: '
-    + |${user.getRoles()}|">content
+    + |${user.formatNameRoles()}|">content
     </div>
     <div class="col-1">
       <form th:action="@{/logout}" th:method="POST">

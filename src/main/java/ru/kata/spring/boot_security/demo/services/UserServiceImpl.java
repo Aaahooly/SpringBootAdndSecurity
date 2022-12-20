@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public Optional<User> findByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
         System.out.println(user.get());
         return user;
     }

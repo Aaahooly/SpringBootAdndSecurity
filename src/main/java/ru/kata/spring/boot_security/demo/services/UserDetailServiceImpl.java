@@ -1,14 +1,17 @@
 package ru.kata.spring.boot_security.demo.services;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 import java.util.Optional;
+
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
@@ -20,9 +23,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUsername(s);
+        Optional<User> user = Optional.ofNullable(userRepository.findByUsername(s));
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found!");
         }

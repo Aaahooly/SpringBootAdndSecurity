@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
+
 
 @Entity
 @Table(name = "role")

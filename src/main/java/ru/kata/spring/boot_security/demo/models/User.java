@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.models;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.*;
@@ -23,7 +24,10 @@ public class User implements UserDetails {
     @Column(name = "age")
     private int age;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "users_roles"
+//    , joinColumns = @JoinColumn(name = "users_id"),
+//    inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles = new LinkedHashSet<>();
 
 
@@ -41,6 +45,7 @@ public class User implements UserDetails {
     public User() {
     }
 
+    @Transactional
     //Запихиваем пачку ролей в Collection
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -70,6 +75,7 @@ public class User implements UserDetails {
     public void setAge(int age) {
         this.age = age;
     }
+
 
     public Set<Role> getRoles() {
         return roles;
