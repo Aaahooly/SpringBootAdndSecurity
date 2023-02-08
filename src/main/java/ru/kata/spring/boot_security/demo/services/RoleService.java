@@ -6,6 +6,7 @@ import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,8 +21,8 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
-    public Set<Role> findAll(){
-        return roleRepository.findAll().stream().collect(Collectors.toSet());
+    public List<Role> findAll(){
+        return roleRepository.findAll();
     }
 
 

@@ -15,9 +15,13 @@ public interface UserService {
 
     public void deleteUser(int idUser);
 
-    public void updateUser(int idUser,User user);
+    public void updateUser(User user);
 
     public Optional<User> findByUsername(String username);
 
     public User getUserOfAuthentication();
+
+    public User findById(int id);
+
+    void debugAdTable();
 }

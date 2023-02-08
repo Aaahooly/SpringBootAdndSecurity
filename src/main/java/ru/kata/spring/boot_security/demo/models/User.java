@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -19,6 +21,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Valid
 public class User implements UserDetails {
 
     @Id
@@ -34,6 +37,7 @@ public class User implements UserDetails {
     @Column(name = "age")
     private int age;
 
+
     @ManyToMany(fetch = FetchType.LAZY)
 //    @JoinTable(name = "users_roles"
 //    , joinColumns = @JoinColumn(name = "users_id"),
@@ -41,13 +45,13 @@ public class User implements UserDetails {
     private Set<Role> roles = new LinkedHashSet<>();
 
 
-    public User(String password, String username, int age, Set<Role> roles) {
+    public User(String username, int age, Set<Role> roles) {
         this.username = username;
         this.age = age;
         this.roles = roles;
     }
 
-    public User(String username, int age, Set<Role> roles) {
+    public User(String username, int age) {
         this.username = username;
         this.age = age;
     }

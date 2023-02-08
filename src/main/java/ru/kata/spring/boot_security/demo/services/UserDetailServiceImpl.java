@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.services;
 
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,10 +24,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Optional<User> user = Optional.ofNullable(userRepository.findByUsername(s));
+        Optional<User> user = userRepository.findByUsername(s);
+        Hibernate.initialize(user.get().getRoles());
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found!");
         }

@@ -75,7 +75,7 @@ public class AdminController {
     public String update(@ModelAttribute("user") User user,
                          @RequestParam("str") String[] rolesOfForm) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userService.updateUser(user.getId(), roleService.setUserRole(user, rolesOfForm));
+//        userService.updateUser(user.getId(), roleService.setUserRole(user, rolesOfForm));
         return "redirect:/admin";
     }
 

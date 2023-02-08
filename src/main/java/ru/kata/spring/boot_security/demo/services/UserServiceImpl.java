@@ -11,9 +11,12 @@ import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 @Service
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
@@ -22,10 +25,9 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Optional<User> findByUsername(String username) {
-        Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
-        System.out.println(user.get());
-        return user;
+        return userRepository.findByUsername(username);
     }
 
     @Transactional(rollbackFor = SQLException.class, readOnly = true)
@@ -34,6 +36,21 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    public User findById(int id) {
+        return userRepository.findById(id).orElse(new User());
+    }
+
+    @Override
+    public void debugAdTable() {
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Т");
+            }
+        };
+        Timer timer= new Timer();
+        timer.schedule(timerTask,2000);
+    }
 
     @Override
     public User show(int idUser) {
@@ -53,8 +70,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void updateUser(int idUser, User user) {
-        User userDb = userRepository.findById(idUser).get();
+    public void updateUser(User user) {
+        User userDb = userRepository.findById(user.getId()).get();
         userDb.setUsername(user.getUsername());
         userDb.setAge(user.getAge());
         userDb.setPassword(user.getPassword());

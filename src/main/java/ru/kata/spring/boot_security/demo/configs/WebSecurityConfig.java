@@ -26,13 +26,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().and()
+        http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/admin/**", "/users/**").hasAnyRole("ADMIN")//Говорим что на страницу админа, может попасть прользователь с ролью админ
                 .antMatchers("/users/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/auth", "/error", "/auth/registration").permitAll()//Сначала пускаем только на страницу логирования и ошибки
                 .and()
-                .formLogin().loginPage("/auth/login")//Своя форма логирования
+                .formLogin().loginPage("/auth")//Своя форма логирования
                 .loginProcessingUrl("/process_login")//вводится название адресса которому передаются данные с формы
                 .successHandler(successUserHandler)// Гибкая настройка редиректа при определённых данных юзера
                 .failureUrl("/auth?error")//Если аутентификация не успешна выкидываем ошибку и перенаправляем обратно на страницу логирования
