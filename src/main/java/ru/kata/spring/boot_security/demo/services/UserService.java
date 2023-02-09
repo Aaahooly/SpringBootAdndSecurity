@@ -7,21 +7,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    public List<User> index();
+    List<User> index();
 
-    public User show(int idUser);
 
-    public void saveUser(User user);
+    void saveUser(User user);
 
-    public void deleteUser(int idUser);
+    void deleteUser(int idUser);
 
-    public void updateUser(User user);
+    void updateUser(User user);
 
-    public Optional<User> findByUsername(String username);
 
-    public User getUserOfAuthentication();
+    Optional<User> findByUsername(String username);
 
-    public User findById(int id);
+    User getUserOfAuthentication();
 
-    void debugAdTable();
 }

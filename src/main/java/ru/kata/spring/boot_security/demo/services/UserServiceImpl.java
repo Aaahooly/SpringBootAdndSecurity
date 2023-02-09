@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,8 +10,6 @@ import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 @Service
@@ -40,23 +37,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElse(new User());
     }
 
-    @Override
-    public void debugAdTable() {
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                System.out.println("Т");
-            }
-        };
-        Timer timer= new Timer();
-        timer.schedule(timerTask,2000);
-    }
-
-    @Override
-    public User show(int idUser) {
-        return userRepository.findById(idUser).get();
-    }
-
     @Transactional(rollbackFor = Exception.class)
     public void saveUser(User user) {
         userRepository.save(user);
@@ -71,18 +51,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateUser(User user) {
-        User userDb = userRepository.findById(user.getId()).get();
-        userDb.setUsername(user.getUsername());
-        userDb.setAge(user.getAge());
-        userDb.setPassword(user.getPassword());
-        userDb.setRoles(user.getRoles());
+        userRepository.save(user);
     }
 
     @Override
     public User getUserOfAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
-        User user = findByUsername(name).get();
+        User user = findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).get();
         return user;
     }
 }

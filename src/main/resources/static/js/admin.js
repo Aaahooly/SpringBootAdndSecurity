@@ -3,6 +3,7 @@ const urlUser = 'http://localhost:8080/people/authentication/';
 let usId;
 let modal = document.getElementById('myModal');
 let btnClose = document.getElementById("btnClose");
+
 btnClose.onclick = function () {
     modal.style.display= "none"
 };
@@ -89,6 +90,10 @@ async function addRowUserInfoTable() {
     let promise = await fetch(urlUser);
     let json = await promise.json();
 
+    let headerUserAndRole = document.getElementById("headerUsernameAndRole");
+
+    let resStringRoles;
+
     let tableBody = document.getElementById("tbodyUser");
     let newCellArr = [document.createElement("td"),
         document.createElement("td"),
@@ -98,12 +103,14 @@ async function addRowUserInfoTable() {
     newCellArr[1].innerHTML = json.username;
     newCellArr[2].innerHTML = json.age;
     if (json['roles'].length == 2) {
-        newCellArr[3].innerHTML = "ADMIN, USER";
+        newCellArr[3].innerHTML = resStringRoles = "ADMIN, USER";
     } else if (json['roles'][0]['id'] == 1) {
-        newCellArr[3].innerHTML = "ADMIN";
+        newCellArr[3].innerHTML = resStringRoles = "ADMIN";
     } else {
-        newCellArr[3].innerHTML = "USER";
+        newCellArr[3].innerHTML = resStringRoles  = "USER";
     }
+
+    headerUserAndRole.innerText = "Login: " + json.username +  " with roles: " + resStringRoles;
 
     let row = document.createElement('tr');
     for (let i = 0; i < newCellArr.length; i++) {

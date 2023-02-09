@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +38,6 @@ public class User implements UserDetails {
 
 
     @ManyToMany(fetch = FetchType.LAZY)
-//    @JoinTable(name = "users_roles"
-//    , joinColumns = @JoinColumn(name = "users_id"),
-//    inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles = new LinkedHashSet<>();
 
 
@@ -129,11 +125,12 @@ public class User implements UserDetails {
         return true;
     }
 
-    public String formatNameRoles(){
+    public String formatNameRoles() {
         return Arrays.toString(new Set[]{roles}) // collection - ваша коллекция
                 .replace("[", "").replace("ROLE_", "")  // удалим скобку (можно заменить на "(")
                 .replace("]", "");
     }
+
     @Override
     public String toString() {
         return "User{" +
