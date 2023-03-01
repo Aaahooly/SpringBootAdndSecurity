@@ -63,26 +63,21 @@ public class PeopleRestController {
             }
             throw new PeopleNotCreatedException(errorMsg.toString());
         }
-        System.out.println("Save: " + user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.saveUser(user);
         //отправляем http с пустым телом и со статусом 200
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/people", method = RequestMethod.PATCH)
     public ResponseEntity<HttpStatus> updates(@RequestBody @Valid User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.updateUser(user);
-        System.out.println("Update:" + user);
         return ResponseEntity.ok(HttpStatus.OK);
-
     }
 
 
     @RequestMapping(value = "/people", method = RequestMethod.DELETE)
     public ResponseEntity<HttpStatus> delete(@RequestBody User user) {
-        System.out.println("Delete: " + user);
         userService.deleteUser(user.getId());
         return ResponseEntity.ok(HttpStatus.OK);
     }

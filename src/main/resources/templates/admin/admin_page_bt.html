@@ -66,7 +66,7 @@
                                 <!--Таблица юзеров js-->
                                 <div class="tab-pane fade show active " id="users" role="tabpanel"
                                      aria-labelledby="users-table">
-                                    <table class="container-fluid table table-hover">
+                                    <table class="container-fluid table table-hover" id="tableUsersInfo">
                                         <thead>
                                         <tr>
                                             <th scope="col">ID</th>
@@ -87,7 +87,7 @@
                                 <!--Создание юзеров-->
                                 <div class="tab-pane fade" id="create" role="tabpanel" aria-labelledby="create-profile">
                                     <div class="container-fluid text-center">
-                                        <form >
+                                        <form id="formCreate" >
 
                                             <div class="col-3 mx-auto">
                                                 <strong><label for="inputLogin"
@@ -123,9 +123,9 @@
                                             </div>
                                             <br/>
 
-                                            <div class="mx-auto">
-                                                <button  id="btn" class="w-25 btn btn-success ">Создать</button>
-                                            </div>
+<!--                                            <div class="mx-auto">-->
+<!--                                                <button  id="btn" class="w-25 btn btn-success ">Создать</button>-->
+<!--                                            </div>-->
 
                                         </form>
                                     </div>
@@ -211,7 +211,7 @@
                                     <div class="col-5 mx-auto">
                                         <strong><label for="formControlInputPassword2"
                                                        class="form-label">Пароль</label></strong>
-                                        <input type="password" class="form-control form-control-xl "
+                                        <input type="password" value="" class="form-control form-control-xl "
                                                id="formControlInputPassword2" autocomplete="on"  placeholder="*********">
                                     </div>
                                     <br/>

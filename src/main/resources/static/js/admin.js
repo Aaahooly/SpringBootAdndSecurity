@@ -1,11 +1,12 @@
 const urlUsers = 'http://localhost:8080/people/';
 const urlUser = 'http://localhost:8080/people/authentication/';
+
 let usId;
+
 let modal = document.getElementById('myModal');
 let btnClose = document.getElementById("btnClose");
-
 btnClose.onclick = function () {
-    modal.style.display= "none"
+    modal.style.display = "none"
 };
 window.onclick = function (event) {
     if (event.target == modal) {
@@ -13,21 +14,25 @@ window.onclick = function (event) {
     }
 };
 
-addRowUsers();
-addRowUserInfoTable();
-createUser();
-updateUser();
 
 
+addUsersTable();
+createForm();
 
-async function addRowUsers() {
+function clearTable() {
+    let table = document.getElementById("tableId");
+    table.innerHTML = "";
+}
+
+
+async function addUsersTable() {
+    clearTable();
     let promise = await fetch(urlUsers);
     let json = await promise.json();
     let tableBody = document.getElementById("tableId");
     let inputId = document.getElementById("formControlInputId");
     let inputLogin = document.getElementById("formControlInputLogin2");
     let inputAge = document.getElementById("formControlInputAge2");
-
     for (let user of json) {
 
         // delete
@@ -37,7 +42,7 @@ async function addRowUsers() {
         btnDelete.innerText = "delete";
         btnDelete.onclick = function () {
             usId = btnDelete.value;
-            let jsonIdUser = {id : usId};
+            let jsonIdUser = {id: usId};
             deleteUser(jsonIdUser);
         }
 
@@ -52,6 +57,7 @@ async function addRowUsers() {
             inputAge.placeholder = user.age;
             inputLogin.placeholder = user.username;
             modal.style.display = "block";
+            updateUser(usId);
         }
 
         let newCellArr = [document.createElement("td"),
@@ -78,22 +84,20 @@ async function addRowUsers() {
 
 
         for (let i = 0; i < newCellArr.length; i++) {
-        newRow.appendChild(newCellArr[i]);
+            newRow.appendChild(newCellArr[i]);
+        }
+        tableBody.appendChild(newRow);
     }
-   tableBody.appendChild(newRow);
-  }
-
+    console.log("add user table");
 
 }
 
-async function addRowUserInfoTable() {
+//USer table
+(async () => {
     let promise = await fetch(urlUser);
     let json = await promise.json();
-
     let headerUserAndRole = document.getElementById("headerUsernameAndRole");
-
     let resStringRoles;
-
     let tableBody = document.getElementById("tbodyUser");
     let newCellArr = [document.createElement("td"),
         document.createElement("td"),
@@ -107,10 +111,10 @@ async function addRowUserInfoTable() {
     } else if (json['roles'][0]['id'] == 1) {
         newCellArr[3].innerHTML = resStringRoles = "ADMIN";
     } else {
-        newCellArr[3].innerHTML = resStringRoles  = "USER";
+        newCellArr[3].innerHTML = resStringRoles = "USER";
     }
 
-    headerUserAndRole.innerText = "Login: " + json.username +  " with roles: " + resStringRoles;
+    headerUserAndRole.innerText = "Login: " + json.username + " with roles: " + resStringRoles;
 
     let row = document.createElement('tr');
     for (let i = 0; i < newCellArr.length; i++) {
@@ -118,71 +122,92 @@ async function addRowUserInfoTable() {
     }
     tableBody.appendChild(row);
 
-}
+})();
 
-async function createUser() {
+//Create method
+function createForm() {
     let user;
-    document.getElementById('btn').addEventListener('click', () => {
+    let formCreate = document.getElementById("formCreate");
+    let btnCreate = document.createElement("button");
+    btnCreate.setAttribute("class", "w-25 btn btn-success");
+    btnCreate.innerText = "create";
+    btnCreate.onclick = function () {
         let login = document.getElementById('inputLogin').value;
         let password = document.getElementById('inputPassword').value;
         let age = document.getElementById('inputAge').value;
         let roles = $("#selectRole").val();
-        console.log(roles);
+
         let resRoles;
-        if (roles.length == 2) {
-            resRoles = [{id: 1, name: roles[0]},{id: 2, name: roles[1]}]
+        if (roles.length == 0) {
+            resRoles = [{id: 2, name: roles[0]}]
+        } else if (roles.length == 2) {
+            resRoles = [{id: 1, name: roles[0]}, {id: 2, name: roles[1]}]
         } else if (roles[0] == "ROLE_ADMIN") {
             resRoles = [{id: 1, name: roles[0]}]
         } else {
             resRoles = [{id: 2, name: roles[0]}]
         }
-        user = {password: password, username: login, age: Number(age), roles: resRoles };
-        console.log(user);
-        fetch("http://localhost:8080/people", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(user)
-        });
-    });
+        user = {password: password, username: login, age: Number(age), roles: resRoles};
+        createUser(user);
+    }
+    formCreate.appendChild(btnCreate);
+
 }
 
-async function updateUser(){
+function updateUser(id) {
+    let tempId = id
     let userUpdate;
-    document.getElementById('btnEditId').addEventListener('click', () => {
-        let id = usId;
-        let login = document.getElementById('formControlInputLogin2').value;
-        let password = document.getElementById('formControlInputPassword2').value;
-        let age = document.getElementById('formControlInputAge2').value;
-        let roles = $("#selectRoleModal").val();
-        let resRoles;
-        if (roles.length == 2) {
-            resRoles = [{id: 1, name: roles[0]},{id: 2, name: roles[1]}]
-        } else if (roles[0] == "ROLE_ADMIN") {
-            resRoles = [{id: 1, name: roles[0]}]
-        } else {
-            resRoles = [{id: 2, name: roles[0]}]
-        }
-        userUpdate = {id: id, password: password, username: login, age: Number(age), roles: resRoles };
-        fetch("http://localhost:8080/people/", {
-            method: "PATCH",
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(userUpdate)
+    document.getElementById('btnEditId').addEventListener('click',
+        async () => {
+            let id = tempId;
+            let login = document.getElementById('formControlInputLogin2').value;
+            let password = document.getElementById('formControlInputPassword2').value;
+            let age = document.getElementById('formControlInputAge2').value;
+            let roles = $("#selectRoleModal").val();
+            let resRoles;
+            if (roles.length == 2) {
+                resRoles = [{id: 1, name: roles[0]}, {id: 2, name: roles[1]}]
+            } else if (roles[0] == "ROLE_ADMIN") {
+                resRoles = [{id: 1, name: roles[0]}]
+            } else {
+                resRoles = [{id: 2, name: roles[0]}]
+            }
+
+            userUpdate = {id: id, password: password, username: login, age: Number(age), roles: resRoles};
+
+            await fetch("http://localhost:8080/people/", {
+                method: "PATCH",
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(userUpdate)
+            });
+            // addUsersTable();
         });
-    });
-    console.log(userUpdate);
+    addUsersTable();
+    console.log("Обновление таблицы из updateUser");
 }
 
 async function deleteUser(id) {
-     await fetch("http://localhost:8080/people/", {
+    await fetch("http://localhost:8080/people/", {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(id)
     });
-     console.log(id);
+    await addUsersTable();
+    console.log("ОБновление таблицы из deleteUser")
+}
+
+async function createUser(user) {
+     await fetch("http://localhost:8080/people/", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(user)
+    });
+    await addUsersTable();
+    console.log("ОБновление таблицы из метода createUser")
 }
