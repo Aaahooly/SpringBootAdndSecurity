@@ -1,10 +1,9 @@
 const urlUsers = 'http://localhost:8080/people/';
 const urlUser = 'http://localhost:8080/people/authentication/';
-
 let usId;
-
 let modal = document.getElementById('myModal');
 let btnClose = document.getElementById("btnClose");
+
 btnClose.onclick = function () {
     modal.style.display = "none"
 };
@@ -14,8 +13,6 @@ window.onclick = function (event) {
     }
 };
 
-
-
 addUsersTable();
 createForm();
 
@@ -23,7 +20,6 @@ function clearTable() {
     let table = document.getElementById("tableId");
     table.innerHTML = "";
 }
-
 
 async function addUsersTable() {
     clearTable();
@@ -131,7 +127,8 @@ function createForm() {
     let btnCreate = document.createElement("button");
     btnCreate.setAttribute("class", "w-25 btn btn-success");
     btnCreate.innerText = "create";
-    btnCreate.onclick = function () {
+    btnCreate.onclick = function (ev) {
+        ev.preventDefault();
         let login = document.getElementById('inputLogin').value;
         let password = document.getElementById('inputPassword').value;
         let age = document.getElementById('inputAge').value;
@@ -158,7 +155,8 @@ function updateUser(id) {
     let tempId = id
     let userUpdate;
     document.getElementById('btnEditId').addEventListener('click',
-        async () => {
+        (ev) => {
+            ev.preventDefault();
             let id = tempId;
             let login = document.getElementById('formControlInputLogin2').value;
             let password = document.getElementById('formControlInputPassword2').value;
@@ -172,20 +170,19 @@ function updateUser(id) {
             } else {
                 resRoles = [{id: 2, name: roles[0]}]
             }
-
             userUpdate = {id: id, password: password, username: login, age: Number(age), roles: resRoles};
-
-            await fetch("http://localhost:8080/people/", {
+            fetch("http://localhost:8080/people/", {
                 method: "PATCH",
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
                 body: JSON.stringify(userUpdate)
+            }).then(() => {
+                document.forms['formUpdate'].reset();
+                addUsersTable();
+                $('#btnClose').click();
             });
-            // addUsersTable();
         });
-    addUsersTable();
-    console.log("Обновление таблицы из updateUser");
 }
 
 async function deleteUser(id) {
@@ -197,17 +194,18 @@ async function deleteUser(id) {
         body: JSON.stringify(id)
     });
     await addUsersTable();
-    console.log("ОБновление таблицы из deleteUser")
 }
 
 async function createUser(user) {
-     await fetch("http://localhost:8080/people/", {
+    await fetch("http://localhost:8080/people/", {
         method: "POST",
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(user)
+    }).then(() => {
+        document.forms['formCreate'].reset();
+        addUsersTable();
+        $('#users-table').click();
     });
-    await addUsersTable();
-    console.log("ОБновление таблицы из метода createUser")
 }
