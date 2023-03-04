@@ -7,10 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.UserService;
@@ -23,6 +26,7 @@ import java.util.List;
 
 
 @RestController
+@RequestMapping("/people")
 public class PeopleRestController {
 
     private final UserService userService;
@@ -36,21 +40,18 @@ public class PeopleRestController {
     }
 
 
-    @RequestMapping(value = "/people", method = RequestMethod.GET)
+    @GetMapping()
     public List<User> findAll() {
-        System.out.println("Получили всех пользователей");
         return userService.index();//jackson конвертирует объекты в json
     }
 
-
-    @RequestMapping(value = "/people/authentication", method = RequestMethod.GET)
+    @GetMapping("/authentication")
     public User getUserOfAuthentication() {
         System.out.println("Получили авторизорованного  пользователя");
         return userService.getUserOfAuthentication();
     }
 
-
-    @RequestMapping(value = "/people", method = RequestMethod.POST)
+    @PostMapping()
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid User user,
                                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -69,14 +70,13 @@ public class PeopleRestController {
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/people", method = RequestMethod.PATCH)
+    @PatchMapping()
     public ResponseEntity<HttpStatus> updates(@RequestBody @Valid User user) {
         userService.updateUser(user);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-
-    @RequestMapping(value = "/people", method = RequestMethod.DELETE)
+    @DeleteMapping()
     public ResponseEntity<HttpStatus> delete(@RequestBody User user) {
         userService.deleteUser(user.getId());
         return ResponseEntity.ok(HttpStatus.OK);

@@ -54,6 +54,13 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void updateUser(User user) {
+        User repUser = findById(user.getId());
+        if (user.getUsername().length() == 0) {
+            user.setUsername(repUser.getUsername());
+        }
+        if (user.getAge() == 0) {
+            user.setAge(repUser.getAge());
+        }
         if (user.getPassword().length() == 0) {
             user.setPassword(findById(user.getId()).getPassword());
         } else {

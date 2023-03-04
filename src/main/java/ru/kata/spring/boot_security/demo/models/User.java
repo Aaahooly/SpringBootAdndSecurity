@@ -125,12 +125,6 @@ public class User implements UserDetails {
         return true;
     }
 
-    public String formatNameRoles() {
-        return Arrays.toString(new Set[]{roles}) // collection - ваша коллекция
-                .replace("[", "").replace("ROLE_", "")  // удалим скобку (можно заменить на "(")
-                .replace("]", "");
-    }
-
     @Override
     public String toString() {
         return "User{" +

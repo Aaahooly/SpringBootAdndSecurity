@@ -1,12 +1,8 @@
 const urlUsers = 'http://localhost:8080/people/';
 const urlUser = 'http://localhost:8080/people/authentication/';
 let usId;
-let modal = document.getElementById('myModal');
-let btnClose = document.getElementById("btnClose");
 
-btnClose.onclick = function () {
-    modal.style.display = "none"
-};
+let modal = document.getElementById('myModal');
 window.onclick = function (event) {
     if (event.target == modal) {
         modal.style.display = "none";
@@ -55,16 +51,13 @@ async function addUsersTable() {
             modal.style.display = "block";
             updateUser(usId);
         }
-
         let newCellArr = [document.createElement("td"),
             document.createElement("td"),
             document.createElement("td"),
             document.createElement("td"),
             document.createElement("td"),
             document.createElement("td")];
-
         let newRow = document.createElement("tr");
-
         newCellArr[0].innerHTML = user.id;
         newCellArr[1].innerHTML = user.username;
         newCellArr[2].innerHTML = user.age;
@@ -77,15 +70,11 @@ async function addUsersTable() {
         }
         newCellArr[4].appendChild(btnNode);
         newCellArr[5].appendChild(btnDelete);
-
-
         for (let i = 0; i < newCellArr.length; i++) {
             newRow.appendChild(newCellArr[i]);
         }
         tableBody.appendChild(newRow);
     }
-    console.log("add user table");
-
 }
 
 //USer table
@@ -154,35 +143,54 @@ function createForm() {
 function updateUser(id) {
     let tempId = id
     let userUpdate;
-    document.getElementById('btnEditId').addEventListener('click',
-        (ev) => {
-            ev.preventDefault();
-            let id = tempId;
-            let login = document.getElementById('formControlInputLogin2').value;
-            let password = document.getElementById('formControlInputPassword2').value;
-            let age = document.getElementById('formControlInputAge2').value;
-            let roles = $("#selectRoleModal").val();
-            let resRoles;
-            if (roles.length == 2) {
-                resRoles = [{id: 1, name: roles[0]}, {id: 2, name: roles[1]}]
-            } else if (roles[0] == "ROLE_ADMIN") {
-                resRoles = [{id: 1, name: roles[0]}]
-            } else {
-                resRoles = [{id: 2, name: roles[0]}]
-            }
-            userUpdate = {id: id, password: password, username: login, age: Number(age), roles: resRoles};
-            fetch("http://localhost:8080/people/", {
-                method: "PATCH",
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify(userUpdate)
-            }).then(() => {
-                document.forms['formUpdate'].reset();
-                addUsersTable();
-                $('#btnClose').click();
-            });
+    //Создание кнопок закрыть, создать
+    let btnEdit = document.createElement("button");
+    btnEdit.setAttribute("class", "btn btn-primary btn-xl");
+    btnEdit.innerText = "Edit";
+    let buttonClose = document.createElement("button");
+    buttonClose.setAttribute("class", "btn btn-secondary");
+    buttonClose.setAttribute("id", "btnClose")
+    buttonClose.innerText = "Close";
+    buttonClose.onclick = function () {
+        modal.style.display = "none";
+    }
+    let modalFooter = document.getElementById("modal-footer");
+    btnEdit.onclick = function (ev) {
+        let id = tempId;
+        let login = document.getElementById('formControlInputLogin2').value;
+        let password = document.getElementById('formControlInputPassword2').value;
+        let age = document.getElementById('formControlInputAge2').value;
+        let roles = $("#selectRoleModal").val();
+        let resRoles;
+        if (roles.length == 2) {
+            resRoles = [{id: 1, name: roles[0]}, {id: 2, name: roles[1]}]
+        } else if (roles[0] == "ROLE_ADMIN") {
+            resRoles = [{id: 1, name: roles[0]}]
+        } else {
+            resRoles = [{id: 2, name: roles[0]}]
+        }
+        userUpdate = {
+            id: id,
+            password: password,
+            username: login,
+            age: Number(age),
+            roles: resRoles
+        };
+        ev.preventDefault();
+        fetch("http://localhost:8080/people/", {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(userUpdate)
+        }).then(() => {
+            $('#btnClose').click();
+            addUsersTable();
+            btnEdit.remove();
         });
+    }
+    modalFooter.appendChild(buttonClose);
+    modalFooter.appendChild(btnEdit);
 }
 
 async function deleteUser(id) {
