@@ -1,30 +1,33 @@
 package ru.kata.spring.boot_security.demo.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 
 @Service
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Optional<User> findByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
-        System.out.println(user.get());
-        return user;
+        return userRepository.findByUsername(username);
     }
 
     @Transactional(rollbackFor = SQLException.class, readOnly = true)
@@ -33,10 +36,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-
-    @Override
-    public User show(int idUser) {
-        return userRepository.findById(idUser).get();
+    public User findById(int id) {
+        return userRepository.findById(id).orElse(new User());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -52,19 +53,25 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void updateUser(int idUser, User user) {
-        User userDb = userRepository.findById(idUser).get();
-        userDb.setUsername(user.getUsername());
-        userDb.setAge(user.getAge());
-        userDb.setPassword(user.getPassword());
-        userDb.setRoles(user.getRoles());
+    public void updateUser(User user) {
+        User repUser = findById(user.getId());
+        if (user.getUsername().length() == 0) {
+            user.setUsername(repUser.getUsername());
+        }
+        if (user.getAge() == 0) {
+            user.setAge(repUser.getAge());
+        }
+        if (user.getPassword().length() == 0) {
+            user.setPassword(findById(user.getId()).getPassword());
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        userRepository.save(user);
     }
 
     @Override
     public User getUserOfAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
-        User user = findByUsername(name).get();
+        User user = findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).get();
         return user;
     }
 }

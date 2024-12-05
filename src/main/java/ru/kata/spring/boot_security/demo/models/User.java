@@ -2,12 +2,25 @@ package ru.kata.spring.boot_security.demo.models;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
-import java.util.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Valid
 public class User implements UserDetails {
 
     @Id
@@ -23,17 +36,18 @@ public class User implements UserDetails {
     @Column(name = "age")
     private int age;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Role> roles = new LinkedHashSet<>();
 
 
-    public User(String password, String username, int age, Set<Role> roles) {
+    public User(String username, int age, Set<Role> roles) {
         this.username = username;
         this.age = age;
         this.roles = roles;
     }
 
-    public User(String username, int age, Set<Role> roles) {
+    public User(String username, int age) {
         this.username = username;
         this.age = age;
     }
@@ -41,6 +55,7 @@ public class User implements UserDetails {
     public User() {
     }
 
+    @Transactional
     //Запихиваем пачку ролей в Collection
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -70,6 +85,7 @@ public class User implements UserDetails {
     public void setAge(int age) {
         this.age = age;
     }
+
 
     public Set<Role> getRoles() {
         return roles;
@@ -109,11 +125,6 @@ public class User implements UserDetails {
         return true;
     }
 
-    public String formatNameRoles(){
-        return Arrays.toString(new Set[]{roles}) // collection - ваша коллекция
-                .replace("[", "").replace("ROLE_", "")  // удалим скобку (можно заменить на "(")
-                .replace("]", "");
-    }
     @Override
     public String toString() {
         return "User{" +

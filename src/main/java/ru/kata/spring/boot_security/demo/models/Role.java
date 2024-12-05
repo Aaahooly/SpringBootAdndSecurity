@@ -1,11 +1,18 @@
 package ru.kata.spring.boot_security.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
+
 
 @Entity
 @Table(name = "role")
@@ -18,6 +25,7 @@ public class Role implements GrantedAuthority {
     @Column(name = "user_role")
     private String name;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new LinkedHashSet<>();
 
@@ -32,9 +40,11 @@ public class Role implements GrantedAuthority {
     public Role() {
     }
 
+
     public String getName() {
         return name;
     }
+
 
     public Set<User> getUsers() {
         return users;
@@ -43,6 +53,7 @@ public class Role implements GrantedAuthority {
     public void setUsers(Set<User> users) {
         this.users = users;
     }
+
     public int getId() {
         return id;
     }
@@ -51,6 +62,7 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 
+
     public String getUserRole() {
         return name;
     }
@@ -58,6 +70,7 @@ public class Role implements GrantedAuthority {
     public void setName(String name) {
         this.name = name;
     }
+
 
     @Override
     public String getAuthority() {

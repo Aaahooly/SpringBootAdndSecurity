@@ -12,8 +12,7 @@
 <!--Хедер главной страницы-->
 <div class="container-fluid">
   <div class="row bg-dark " style="height: 35px">
-    <div class="col-10 float-left text-light h4" th:text="'Login: ' + ${user.getUsername()} + ' with roles: '
-    + |${user.getRoles()}|">content
+    <div class="col-10 float-left text-light h4 userHeader" id="headerUsernameAndRolePageUser">content
     </div>
     <div class="col-1">
       <form th:action="@{/logout}" th:method="POST">
@@ -63,13 +62,11 @@
                         <th scope="col">Логин</th>
                         <th scope="col">Возраст</th>
                         <th scope="col">Роль</th>
+
                       </tr>
                       </thead>
-                      <tbody>
-                      <td><a th:text="${user.getId()}">ID</a></td>
-                      <td><a th:text="${user.getUsername()}">Логин</a></td>
-                      <td><a th:text="${user.age}">Возраст</a></td>
-                      <td><a th:text="${user.getRoles()}">Роли</a></td>
+                      <tbody id="tbodyUserInfo">
+                      <!-- Work js-->
                       </tbody>
                     </table>
                   </div>
@@ -83,6 +80,8 @@
   </div>
 </div>
 </div>
+
+<script src="/js/user.js"></script>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
